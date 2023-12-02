@@ -2,8 +2,9 @@ DROP DATABASE IF EXISTS `jotvault_db`;
 
 CREATE DATABASE `jotvault_db`;
 
-CREATE USER IF NOT EXISTS 'jotvault_dev'@'localhost' IDENTIFIED BY 'SecureP@ss123';
-GRANT ALL PRIVILEGES ON `jotvault_db`.* TO 'hbnb_dev'@'localhost';
+DROP USER IF EXISTS 'jotvault_dev'@'localhost';
+CREATE USER IF NOT EXISTS 'jotvault_dev'@'localhost' IDENTIFIED BY 'SecureP$ss123';
+GRANT ALL PRIVILEGES ON `jotvault_db`.* TO 'jotvault_dev'@'localhost';
 FLUSH PRIVILEGES;
 
 USE `jotvault_db`;
@@ -11,10 +12,12 @@ USE `jotvault_db`;
 CREATE TABLE `folders` (
     `id` CHAR(36) PRIMARY KEY,
     `title` VARCHAR(256) NOT NULL,
-    `parent_id` CHAR(36),
+    `parent_id` CHAR(36) DEFAULT '00000000-0000-0000-0000-000000000000',
 
     CONSTRAINT `parent_folder_fk` FOREIGN KEY (`parent_id`) REFERENCES `folders` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
+
+INSERT INTO folders (id, title, parent_id) VALUE ("00000000-0000-0000-0000-000000000000", "root", "00000000-0000-0000-0000-000000000000");
 
 CREATE TABLE `users` (
     `id` CHAR(36) PRIMARY KEY,
@@ -63,6 +66,9 @@ CREATE TABLE `notes_changelog` (
 CREATE TABLE `projects` (
     `id` CHAR(36) PRIMARY KEY,
     `title` VARCHAR(256) NOT NULL
+    `user_id` CHAR(36) NOT NULL,
+
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE `project_notes_assoc` (

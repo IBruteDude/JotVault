@@ -1,5 +1,5 @@
 import sqlalchemy as sa
-from db_classes import (
+from db.db_classes import (
     Base, classes,
     Folder, User, Task, Note, NotesChangelog,
     Project, ProjectNotes, ProjectTasks, TaskTimings
@@ -14,13 +14,16 @@ class DBStorage:
     __session = None
 
     def __init__(self, *args, **kwargs):
-        if not (
-                kwargs.get('user') and kwargs.get('pwd') and\
-                kwargs.get('host') and kwargs.get('db')
-            ):
-            raise KeyError("missing db url parameters")
-        self.__engine = create_engine(
-            "mysql+mysqldb://{user}:{pwd}@{host}/{db}".format(**kwargs))
+        try:
+            if not (
+                    kwargs.get('user') and kwargs.get('pwd') and\
+                    kwargs.get('host') and kwargs.get('db')
+                ):
+                raise KeyError("missing db url parameters")
+            self.__engine = create_engine(
+                "mysql+mysqldb://{user}:{pwd}@{host}/{db}".format(**kwargs))
+        except Exception as e:
+            print(f'[{e.__class__.__name__}]: {e.args}')
 
     def save(self):
         """commit all changes of the current database session"""
@@ -45,10 +48,18 @@ class DBStorage:
         """find an object based on its class and id if found"""
         return self.__session.query(cls).get(id)
 
-    def delete(self, obj=None):
-        """delete from the current database session obj if not None"""
-        if obj is not None:
-            self.__session.delete(obj)
+    def delete(self, obj):
+        """delete from the current session obj or instance with this key"""
+        if type(obj) is str:
+            pivot = obj.find('.')
+            cls_name, id = obj[:pivot], obj[pivot + 1:]
+            if cls_name in classes.keys():
+                obj = self.get(eval(cls_name), id)
+                if obj is None:
+                    raise KeyError(f"no instance of class {cls_name} with id {id}")
+            else:
+                raise KeyError("no such class " + cls_name)
+        self.__session.delete(obj)
 
     def all(self, cls=None):
         """create a dictionary of models currently in database"""
@@ -58,13 +69,13 @@ class DBStorage:
             for cls in classes.values():
                 db_query = self.__session.query(cls).all()
                 for record in db_query:
-                    queried_dict[f'{cls.__name__}.{record.id}'] = record
+                    queried_dict[f'{cls.__name__}.{record.id}'] = record.dict_repr()
             return queried_dict
 
         db_query = self.__session.query(cls).all()
         for record in db_query:
-            queried_dict[f'{cls.__name__}.{record.id}'] = record
-        return queried_dict
+            queried_dict[f'{cls.__name__}.{record.id}'] = record.dict_repr()
+        return list(queried_dict.values())
 
     def count(self, cls=None):
         """count the stored instances of a given class, or of all classes"""

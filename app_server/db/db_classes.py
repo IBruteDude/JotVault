@@ -15,7 +15,10 @@ class StorageBase:
         self.id = uuid4()
 
     def dict_repr(self):
-        return self.__dict__
+        "{'_sa_instance_state': <sqlalchemy.orm.state.InstanceState object at 0x7f93f572b880>, 'last_name': 'Doe', 'user_name': 'john_doe', 'pfp_url': 'https://example.com/john_profile.jpg', 'id': '620ed68c-90e0-11ee-b4cd-00155db5b53c'"
+        copy = self.__dict__.copy()
+        del copy['_sa_instance_state']
+        return copy
     
     def __str__(self):
         """String representation of the BaseModel class"""
@@ -30,7 +33,9 @@ class Folder(StorageBase, Base):
     title = Column(VARCHAR(256), nullable=False)
     parent_id = Column(CHAR(36), ForeignKey('folders.id', onupdate='CASCADE', ondelete='CASCADE'))
 
-    parent_folder = relationship('Folder', remote_side=[id], backref='child_folders')
+    notes = relationship('Note', back_populates='folder', remote_side=[id])
+    child_folders = relationship('Folder', back_populates='parent_folder', remote_side=[id])
+    parent_folder = relationship('Folder', back_populates='child_folders', remote_side=[parent_id])
 
 
 class User(StorageBase, Base):
@@ -44,6 +49,10 @@ class User(StorageBase, Base):
     pfp_url = Column(VARCHAR(75), nullable=False)
     password = Column(VARBINARY(64), nullable=False)
 
+    notes = relationship('Note', back_populates='user')
+    tasks = relationship('Task', back_populates='user')
+    projects = relationship('Project', back_populates='user')
+
 
 class Task(StorageBase, Base):
     __tablename__ = 'tasks'
@@ -54,7 +63,8 @@ class Task(StorageBase, Base):
     status = Column(Enum('todo', 'doing', 'done', name='task_status'), default='todo')
     user_id = Column(CHAR(36), ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'))
 
-    user = relationship('User', backref='tasks')
+    timestamps = relationship('TaskTimings', back_populates='task')
+    user = relationship('User', back_populates='tasks') # or [user_id] idk
 
 
 class Note(StorageBase, Base):
@@ -67,8 +77,9 @@ class Note(StorageBase, Base):
     user_id = Column(CHAR(36), ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'))
     folder_id = Column(CHAR(36), ForeignKey('folders.id', onupdate='CASCADE', ondelete='CASCADE'))
 
-    user = relationship('User', backref='notes')
-    folder = relationship('Folder', backref='notes')
+    user = relationship('User', back_populates='notes')
+    folder = relationship('Folder', back_populates='notes')
+    changelog = relationship('NotesChangelog', back_populates='note')
 
 
 class NotesChangelog(StorageBase, Base):
@@ -81,7 +92,7 @@ class NotesChangelog(StorageBase, Base):
     modified_data = Column(VARCHAR(1024), nullable=False)
     note_id = Column(CHAR(36), ForeignKey('notes.id', onupdate='CASCADE', ondelete='CASCADE'))
 
-    note = relationship('Note', backref='changelog')
+    note = relationship('Note', back_populates='changelog')
 
 
 class Project(StorageBase, Base):
@@ -89,6 +100,9 @@ class Project(StorageBase, Base):
 
     id = Column(CHAR(36), primary_key=True)
     title = Column(VARCHAR(256), nullable=False)
+    user_id = Column(CHAR(36), ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'))
+
+    user = relationship('User', back_populates='projects') # or [user_id] idk
 
 
 class ProjectNotes(StorageBase, Base):
@@ -97,8 +111,8 @@ class ProjectNotes(StorageBase, Base):
     project_id = Column(CHAR(36), ForeignKey('projects.id', onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
     note_id = Column(CHAR(36), ForeignKey('notes.id', onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
 
-    project = relationship('Project', backref='notes_assoc')
-    note = relationship('Note', backref='projects_assoc')
+    # project = relationship('Project', back_populates='notes')
+    # note = relationship('Note', back_populates='projects')
 
 
 class ProjectTasks(StorageBase, Base):
@@ -107,8 +121,8 @@ class ProjectTasks(StorageBase, Base):
     project_id = Column(CHAR(36), ForeignKey('projects.id', onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
     task_id = Column(CHAR(36), ForeignKey('tasks.id', onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
 
-    project = relationship('Project', backref='tasks_assoc')
-    task = relationship('Task', backref='projects_assoc')
+    # project = relationship('Project', back_populates='tasks')
+    # tasks = relationship('Task', back_populates='project', primaryjoin='Project.id == ProjectTasks.project_id')
 
 
 class TaskTimings(StorageBase, Base):
@@ -118,7 +132,7 @@ class TaskTimings(StorageBase, Base):
     start = Column(DATETIME, nullable=False)
     end = Column(DATETIME, nullable=False)
 
-    task = relationship('Task', backref='timestamps')
+    task = relationship('Task', back_populates='timestamps')
 
 classes = {
     'Folder': Folder,
@@ -131,8 +145,3 @@ classes = {
     'ProjectTasks': ProjectTasks,
     'TaskTimings': TaskTimings
 }
-
-
-# Replace 'sqlite' with 'mysql' in the connection string for MySQL
-engine = create_engine('mysql://user:password@localhost/database_name')
-Base.metadata.create_all(engine)
