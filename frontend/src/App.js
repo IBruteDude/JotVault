@@ -7,6 +7,8 @@ import {
 import './App.css';
 import LandingPage from './components/landingPage';
 import RootLayout from './pages/rootLayout';
+import Login from './components/login';
+import Signup from './components/signup';
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -16,6 +18,14 @@ const router = createBrowserRouter(
 			<Route
 				index
 				element={<LandingPage />}
+			/>
+			<Route
+				path="/login"
+				element={<Login />}
+			/>
+			<Route
+				path="/signup"
+				element={<Signup />}
 			/>
 		</Route>
 	)

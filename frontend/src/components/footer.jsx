@@ -20,6 +20,7 @@ const Footer = () => {
 						<Typography
 							variant="h5"
 							fontSize="2rem"
+							textAlign="center"
 							fontWeight="bold"
 							color="white">
 							Meet the team

@@ -6,6 +6,7 @@ import CustomButton from '../utils/customButton';
 const Hero = () => {
 	return (
 		<Box
+			id="hero"
 			sx={{
 				height: '100vh',
 				background: 'linear-gradient(180deg, #FEC097 0%, #FF9190 100%)',

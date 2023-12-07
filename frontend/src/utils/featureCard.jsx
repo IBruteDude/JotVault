@@ -6,6 +6,7 @@ const FeatureCard = ({ icon, title, text }) => {
 		<Box
 			padding="2.5rem 1.6rem"
 			borderRadius="20px"
+			height="21rem"
 			boxShadow="0px 0px 5px 1px rgba(0, 0, 0, 0.25)">
 			<Stack
 				gap={'1.3rem'}

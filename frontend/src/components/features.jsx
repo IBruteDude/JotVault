@@ -1,13 +1,14 @@
-import { Box, Grid, Stack } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import React from 'react';
 import Heading from '../utils/heading';
 import FeatureCard from '../utils/featureCard';
-import { icons } from '../utils/icons';
 import { features } from '../data/featuresData';
 
 const Features = () => {
 	return (
-		<Box className="add-margin">
+		<Box
+			id="features"
+			className="add-margin">
 			<Heading
 				text="Features"
 				subText="Experience the power of note-taking with our innovative features"
@@ -23,7 +24,7 @@ const Features = () => {
 							item
 							height="100%"
 							xs={12}
-							md={6}
+							md={5}
 							lg={3}
 							key={feature.id}>
 							<FeatureCard

@@ -5,6 +5,7 @@
 	--purple: #0d0745;
 	--gray: #3d3d3dab;
 	--dark-gray: #3d3d3d;
+	--blue: #0d0745;
 }
 
 * {
@@ -12,6 +13,10 @@
 	padding: 0;
 	box-sizing: border-box;
 	font-family: 'Noto Sans', sans-serif !important;
+}
+
+html {
+	scroll-behavior: smooth;
 }
 
 a {

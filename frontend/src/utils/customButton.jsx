@@ -19,9 +19,17 @@ const StyledButton = styled(Button)`
 		background-color: ${(props) => props.bgHover};
 	}
 `;
-const CustomButton = ({ text, bgColor, borderColor, bgHover, fs, padding }) => {
+const CustomButton = ({
+	text,
+	bgColor,
+	borderColor,
+	bgHover,
+	fs,
+	padding,
+	path,
+}) => {
 	return (
-		<Link>
+		<Link to={path}>
 			<StyledButton
 				variant="contained"
 				disableElevation
