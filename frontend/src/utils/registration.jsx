@@ -9,12 +9,13 @@ const Registration = ({ icon, text, header, form, option, theForm, path }) => {
 			height="100vh">
 			{/* icon and text */}
 			<Stack
+				display={{ xs: 'none', md: 'flex' }}
 				justifyContent="center"
 				alignItems="center"
 				sx={{
 					background:
 						' linear-gradient(180deg, #FEC097 42.81%, #FF9190 99.06%)',
-					width: '50%',
+					width: { xs: '100%', md: '50%' },
 				}}>
 				<Stack
 					gap="3rem"
@@ -36,7 +37,7 @@ const Registration = ({ icon, text, header, form, option, theForm, path }) => {
 			<Stack
 				justifyContent="center"
 				alignItems="center"
-				width={'50%'}
+				width={{ xs: '100%', md: '50%' }}
 				sx={{
 					background:
 						' radial-gradient(50% 50% at 50% 50%, rgba(255, 255, 255, 0.38) 0%, rgba(254, 192, 151, 0.19) 100%)',

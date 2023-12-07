@@ -10,6 +10,10 @@ const StyledForm = styled.form`
 	align-items: center;
 	gap: 1rem;
 	width: 47%;
+
+	@media (max-width: 768px) {
+		width: 75%;
+	}
 `;
 
 const SignupForm = () => {
