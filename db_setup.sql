@@ -65,7 +65,7 @@ CREATE TABLE `notes_changelog` (
 
 CREATE TABLE `projects` (
     `id` CHAR(36) PRIMARY KEY,
-    `title` VARCHAR(256) NOT NULL
+    `title` VARCHAR(256) NOT NULL,
     `user_id` CHAR(36) NOT NULL,
 
     FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
