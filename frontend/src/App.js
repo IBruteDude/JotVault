@@ -9,6 +9,9 @@ import LandingPage from './components/landingPage';
 import RootLayout from './pages/rootLayout';
 import Login from './components/login';
 import Signup from './components/signup';
+import DashboardLayout from './pages/dashboardLayout';
+import Home from './components/home';
+import Notes from './components/notes';
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -27,6 +30,18 @@ const router = createBrowserRouter(
 				path="/signup"
 				element={<Signup />}
 			/>
+			<Route
+				path="/dashboard"
+				element={<DashboardLayout />}>
+				<Route
+					index
+					element={<Home />}
+				/>
+				<Route
+					path="/dashboard/notes"
+					element={<Notes />}
+				/>
+			</Route>
 		</Route>
 	)
 );

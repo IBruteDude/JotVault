@@ -8,6 +8,15 @@ import { ReactComponent as Close } from '../assets/icons/xmark-solid.svg';
 import { ReactComponent as BG } from '../assets/icons/circles-background.svg';
 import { ReactComponent as LoginIcon } from '../assets/icons/undraw_taking_notes_re_bnaf 1.svg';
 import { ReactComponent as SignupIcon } from '../assets/icons/undraw_design_notes_re_eklr 1.svg';
+import { ReactComponent as SidebarLogo } from '../assets/icons/JotVault-sidebar.svg';
+import { ReactComponent as User } from '../assets/icons/user-solid 1.svg';
+import { ReactComponent as Search } from '../assets/icons/magnifying-glass-solid.svg';
+import { ReactComponent as Pin } from '../assets/icons/thumbtack-solid.svg';
+import { ReactComponent as Archive } from '../assets/icons/box-archive-solid.svg';
+import { ReactComponent as Colors } from '../assets/icons/palette-solid.svg';
+import { ReactComponent as Image } from '../assets/icons/image-solid.svg';
+import { ReactComponent as Trash } from '../assets/icons/trash-solid.svg';
+import { ReactComponent as Pen } from '../assets/icons/pen-solid.svg';
 
 export const icons = {
 	logo: <Logo />,
@@ -20,4 +29,13 @@ export const icons = {
 	bg: <BG />,
 	loginIcon: <LoginIcon />,
 	signupIcon: <SignupIcon />,
+	sidebarLogo: <SidebarLogo />,
+	user: <User />,
+	search: <Search />,
+	pin: <Pin />,
+	archive: <Archive />,
+	colors: <Colors />,
+	image: <Image />,
+	trash: <Trash />,
+	pen: <Pen />,
 };

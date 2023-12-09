@@ -32,6 +32,7 @@ const Hero = () => {
 					bgColor="var(--purple)"
 					borderColor="var(--purple)"
 					padding="0.7rem 3rem"
+					path="/dashboard"
 				/>
 			</Stack>
 		</Box>

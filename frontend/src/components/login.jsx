@@ -12,7 +12,7 @@ const Login = () => {
 				text="Capture inspiration on the go, organize thoughts effortlessly, and unleash your productivity – where every idea finds its perfect place."
 				form={<LoginForm />}
 				option="Or if you don't have account"
-				theForm="Signup now!"
+				theForm="Sign up now!"
 				path="/signup"
 			/>
 		</>
