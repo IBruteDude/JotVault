@@ -12,6 +12,10 @@ import Signup from './components/signup';
 import DashboardLayout from './pages/dashboardLayout';
 import Home from './components/home';
 import Notes from './components/notes';
+import Tasks from './components/tasks';
+import Archive from './components/archive';
+import Trash from './components/trash';
+import Profile from './components/profile';
 
 const router = createBrowserRouter(
 	createRoutesFromElements(
@@ -40,6 +44,22 @@ const router = createBrowserRouter(
 				<Route
 					path="/dashboard/notes"
 					element={<Notes />}
+				/>
+				<Route
+					path="/dashboard/tasks"
+					element={<Tasks />}
+				/>
+				<Route
+					path="/dashboard/archive"
+					element={<Archive />}
+				/>
+				<Route
+					path="/dashboard/trash"
+					element={<Trash />}
+				/>
+				<Route
+					path="/dashboard/profile"
+					element={<Profile />}
 				/>
 			</Route>
 		</Route>

@@ -7,7 +7,8 @@ const DashboardHeading = ({ title }) => {
 			variant="h3"
 			fontSize="32px"
 			fontWeight="bold"
-			color="var(--blue)">
+			color="var(--blue)"
+			marginBottom="0.7rem">
 			{title}
 		</Typography>
 	);

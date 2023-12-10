@@ -17,6 +17,10 @@ import { ReactComponent as Colors } from '../assets/icons/palette-solid.svg';
 import { ReactComponent as Image } from '../assets/icons/image-solid.svg';
 import { ReactComponent as Trash } from '../assets/icons/trash-solid.svg';
 import { ReactComponent as Pen } from '../assets/icons/pen-solid.svg';
+import { ReactComponent as Options } from '../assets/icons/ellipsis-vertical-solid.svg';
+import { ReactComponent as Home } from '../assets/icons/house-solid.svg';
+import { ReactComponent as Note } from '../assets/icons/note-sticky-solid.svg';
+import { ReactComponent as Task } from '../assets/icons/tasks-vector.svg';
 
 export const icons = {
 	logo: <Logo />,
@@ -30,7 +34,12 @@ export const icons = {
 	loginIcon: <LoginIcon />,
 	signupIcon: <SignupIcon />,
 	sidebarLogo: <SidebarLogo />,
-	user: <User />,
+	user: (
+		<User
+			width="inherit"
+			height="inherit"
+		/>
+	),
 	search: <Search />,
 	pin: <Pin />,
 	archive: <Archive />,
@@ -38,4 +47,8 @@ export const icons = {
 	image: <Image />,
 	trash: <Trash />,
 	pen: <Pen />,
+	options: <Options />,
+	home: <Home />,
+	note: <Note />,
+	task: <Task />,
 };
