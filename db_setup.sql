@@ -9,32 +9,34 @@ FLUSH PRIVILEGES;
 
 USE `jotvault_db`;
 
-CREATE TABLE `folders` (
-    `id` CHAR(36) PRIMARY KEY,
-    `title` VARCHAR(256) NOT NULL,
-    `parent_id` CHAR(36) DEFAULT '00000000-0000-0000-0000-000000000000',
-
-    CONSTRAINT `parent_folder_fk` FOREIGN KEY (`parent_id`) REFERENCES `folders` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
-);
-
-INSERT INTO folders (id, title, parent_id) VALUE ("00000000-0000-0000-0000-000000000000", "root", "00000000-0000-0000-0000-000000000000");
-
 CREATE TABLE `users` (
     `id` CHAR(36) PRIMARY KEY,
     `first_name` VARCHAR(35) NOT NULL,
     `last_name` VARCHAR(35) NOT NULL,
     `user_name` VARCHAR(64) NOT NULL,
     `email` VARCHAR(256) NOT NULL,
-    `pfp_url` VARCHAR(75) NOT NULL,
-
+    `pfp_url` VARCHAR(256),
     `password` VARBINARY(64) NOT NULL
 );
+
+CREATE TABLE `folders` (
+    `id` CHAR(36) PRIMARY KEY,
+    `title` VARCHAR(256) NOT NULL,
+    `parent_id` CHAR(36) DEFAULT '00000000-0000-0000-0000-000000000000',
+    `user_id` CHAR(36) NOT NULL,
+
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT `parent_folder_fk` FOREIGN KEY (`parent_id`) REFERENCES `folders` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+-- INSERT INTO folders (id, title, parent_id) VALUES ("00000000-0000-0000-0000-000000000000", "root", "00000000-0000-0000-0000-000000000000");
 
 CREATE TABLE `tasks` (
     `id` CHAR(36) PRIMARY KEY,
     `title` VARCHAR(256) NOT NULL,
     `description` VARCHAR(2048) NOT NULL,
     `status` ENUM('todo', 'doing', 'done') DEFAULT 'todo',
+    `color` CHAR(6) DEFAULT 'FFFFFF',
     `user_id` CHAR(36) NOT NULL,
 
     FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
@@ -43,8 +45,9 @@ CREATE TABLE `tasks` (
 CREATE TABLE `notes` (
     `id` CHAR(36) PRIMARY KEY,
     `title` VARCHAR(256) NOT NULL,
-    `content_url` VARCHAR(75) NOT NULL,
+    `content` TEXT NOT NULL,
     `status` ENUM('pinned', 'normal', 'archived', 'trashed') DEFAULT 'normal',
+    `color` CHAR(6) DEFAULT 'FFFFFF',
     `user_id` CHAR(36) NOT NULL,
     `folder_id` CHAR(36) NOT NULL,
 
@@ -59,13 +62,13 @@ CREATE TABLE `notes_changelog` (
     `modification` ENUM('addition', 'deletion') NOT NULL,
     `modified_data` VARCHAR(1024) NOT NULL,
     `note_id` CHAR(36) NOT NULL,
-    
+
     FOREIGN KEY (`note_id`) REFERENCES `notes` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE `projects` (
     `id` CHAR(36) PRIMARY KEY,
-    `title` VARCHAR(256) NOT NULL
+    `title` VARCHAR(256) NOT NULL,
     `user_id` CHAR(36) NOT NULL,
 
     FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
