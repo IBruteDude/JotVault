@@ -9,7 +9,7 @@ from db.db_classes import User, Note, NotesChangelog
 def user_notes(user_id, note_id=None):
     user = main_storage.get(User, user_id)
     if user is None:
-        return jsonify({'error': f"user {user_id} doesn't exist"})
+        return jsonify({'error': 'user not found'})
     return jsonify([note.dict_repr() for note in user.notes])
 
 @app_bp.route('/<user_id>/notes/<note_id>/changes/<change_id>',
