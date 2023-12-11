@@ -19,6 +19,9 @@ CREATE TABLE `users` (
     `password` VARBINARY(64) NOT NULL
 );
 
+INSERT INTO users (`id`, `first_name`, `last_name`, `user_name`, `email`, `password`)
+    VALUES ("00000000-0000-0000-0000-000000000000", "admin", "admin", "admin", "admin@mail.com", 'admin');
+
 CREATE TABLE `folders` (
     `id` CHAR(36) PRIMARY KEY,
     `title` VARCHAR(256) NOT NULL,
@@ -29,7 +32,16 @@ CREATE TABLE `folders` (
     CONSTRAINT `parent_folder_fk` FOREIGN KEY (`parent_id`) REFERENCES `folders` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
--- INSERT INTO folders (id, title, parent_id) VALUES ("00000000-0000-0000-0000-000000000000", "root", "00000000-0000-0000-0000-000000000000");
+INSERT INTO folders (id, title, parent_id, user_id) VALUES ("00000000-0000-0000-0000-000000000000", "root", "00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000");
+
+CREATE TABLE `projects` (
+    `id` CHAR(36) PRIMARY KEY,
+    `title` VARCHAR(256) NOT NULL,
+
+    `user_id` CHAR(36) NOT NULL,
+
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
+);
 
 CREATE TABLE `tasks` (
     `id` CHAR(36) PRIMARY KEY,
@@ -37,9 +49,14 @@ CREATE TABLE `tasks` (
     `description` VARCHAR(2048) NOT NULL,
     `status` ENUM('todo', 'doing', 'done') DEFAULT 'todo',
     `color` CHAR(6) DEFAULT 'FFFFFF',
-    `user_id` CHAR(36) NOT NULL,
+    `start` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `end` DATETIME DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
+    `user_id` CHAR(36) NOT NULL,
+    `project_id` CHAR(36),
+
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE `notes` (
@@ -48,11 +65,14 @@ CREATE TABLE `notes` (
     `content` TEXT NOT NULL,
     `status` ENUM('pinned', 'normal', 'archived', 'trashed') DEFAULT 'normal',
     `color` CHAR(6) DEFAULT 'FFFFFF',
+
     `user_id` CHAR(36) NOT NULL,
-    `folder_id` CHAR(36) NOT NULL,
+    `folder_id` CHAR(36) DEFAULT '00000000-0000-0000-0000-000000000000',
+    `project_id` CHAR(36),
 
     FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (`folder_id`) REFERENCES `folders` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
+    FOREIGN KEY (`folder_id`) REFERENCES `folders` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE `notes_changelog` (
@@ -64,42 +84,4 @@ CREATE TABLE `notes_changelog` (
     `note_id` CHAR(36) NOT NULL,
 
     FOREIGN KEY (`note_id`) REFERENCES `notes` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
-);
-
-CREATE TABLE `projects` (
-    `id` CHAR(36) PRIMARY KEY,
-    `title` VARCHAR(256) NOT NULL,
-    `user_id` CHAR(36) NOT NULL,
-
-    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
-);
-
-CREATE TABLE `project_notes_assoc` (
-    `project_id` CHAR(36),
-    `note_id` CHAR(36),
-
-    PRIMARY KEY (`project_id`, `note_id`),
-    UNIQUE KEY (`note_id`),
-
-    FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (`note_id`) REFERENCES `notes` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
-);
-
-CREATE TABLE `project_tasks_assoc` (
-    `project_id` CHAR(36),
-    `task_id` CHAR(36),
-
-    PRIMARY KEY (`project_id`, `task_id`),
-    UNIQUE KEY (`task_id`),
-
-    FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON UPDATE CASCADE ON DELETE CASCADE,
-    FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
-);
-
-CREATE TABLE `task_timestamps` (
-    `task_id` CHAR(36) PRIMARY KEY,
-    `start` DATETIME NOT NULL,
-    `end` DATETIME NOT NULL,
-
-    FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`) ON UPDATE CASCADE ON DELETE CASCADE
 );

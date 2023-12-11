@@ -1,8 +1,7 @@
 import sqlalchemy as sa
 from db.db_classes import (
     Base, classes,
-    Folder, User, Task, Note, NotesChangelog,
-    Project, ProjectNotes, ProjectTasks, TaskTimings
+    Folder, User, Task, Note, NotesChangelog, Project
 )
 
 from sqlalchemy import create_engine

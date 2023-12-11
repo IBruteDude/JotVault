@@ -6,7 +6,7 @@ from db.db_classes import *
 
 fake = Faker()
 
-def id_selector(cls):
+def random_id(cls):
     ''' select a random instance's id of type cls '''
     objs = main_storage.all(cls)
     if len(objs) != 0:
@@ -24,16 +24,19 @@ class_generators = {
     "Folder": lambda: {
         "title": fake.sentence()[:256],
 
-        "user_id": id_selector(User),
-        "parent_id": random.choice(main_storage.all(Folder))['id'],
+        "user_id": random_id(User),
+        "parent_id": random_id(Folder),
     },
     "Task": lambda: {
         "title": fake.sentence()[:256],
         "description": fake.paragraph()[:2048],
         "status": random.choice(["todo", "doing", "done"]),
         "color": fake.safe_hex_color()[1:],
+        "start": fake.date_time(),
+        "end": fake.date_time(),
 
-        "user_id": id_selector(User),
+        "user_id": random_id(User),
+        "project_id": random_id(Project),
     },
     "Note": lambda: {
         "title": fake.sentence()[:256],
@@ -41,8 +44,9 @@ class_generators = {
         "status": random.choice(["pinned", "normal", "archived", "trashed"]),
         "color": fake.safe_hex_color()[1:],
 
-        "user_id": id_selector(User),
-        "folder_id": id_selector(Folder),
+        "user_id": random_id(User),
+        "folder_id": random_id(Folder),
+        "project_id": random_id(Project),
     },
     "NotesChangelog": lambda: {
         "time_stamp": fake.date_time(),
@@ -50,24 +54,11 @@ class_generators = {
         "modification": random.choice(["addition", "deletion"]),
         "modified_data": fake.text()[:1024],
 
-        "note_id": id_selector(Note),
+        "note_id": random_id(Note),
     },
     "Project": lambda: {
         "title": fake.sentence()[:256],
 
-        "user_id": id_selector(User),
-    },
-    "ProjectNotes": lambda: {
-        "project_id": id_selector(Project),
-        "note_id": id_selector(Note),
-    },
-    "ProjectTasks": lambda: {
-        "project_id": id_selector(Project),
-        "task_id": id_selector(Task),
-    },
-    "TaskTimings": lambda: {
-        "task_id": id_selector(Task),
-        "start": fake.date_time(),
-        "end": fake.date_time(),
+        "user_id": random_id(User),
     },
 }

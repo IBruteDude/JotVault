@@ -1,4 +1,5 @@
 from uuid import uuid4
+import datetime as dt
 
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy import create_engine
@@ -9,8 +10,8 @@ from utils.hash_algo import hash_password
 
 Base = declarative_base()
 
-
 class StorageBase:
+    db_attrs = ()
     def __init__(self, *args, **kwargs):
         if kwargs.get('id'):
             del kwargs['id']
@@ -41,6 +42,8 @@ class StorageBase:
 class Folder(StorageBase, Base):
     __tablename__ = 'folders'
 
+    db_attrs = ('id', 'title', 'parent_id', 'user_id')
+
     id = Column(CHAR(36), primary_key=True, default=lambda: str(uuid4()))
     title = Column(VARCHAR(256), nullable=False)
     parent_id = Column(CHAR(36), ForeignKey('folders.id', onupdate='CASCADE', ondelete='CASCADE'))
@@ -55,6 +58,8 @@ class Folder(StorageBase, Base):
 class User(StorageBase, Base):
     __tablename__ = 'users'
 
+    db_attrs = ('id', 'first_name', 'last_name',
+                'user_name', 'email', 'pfp_url', 'password')
     def __init__(self, *args, **kwargs):
         ''' Ensure the user's password is hashed '''
         super().__init__(self, *args, **kwargs)
@@ -77,22 +82,28 @@ class User(StorageBase, Base):
 class Task(StorageBase, Base):
     __tablename__ = 'tasks'
 
-    db_attrs = ['id', 'title', 'description', 'status', 'color', 'user_id']
+    db_attrs = ('id', 'title', 'description',
+                'status', 'color', 'user_id', 'project_id')
 
     id = Column(CHAR(36), primary_key=True, default=lambda: str(uuid4()))
     title = Column(VARCHAR(256), nullable=False)
     description = Column(VARCHAR(2048), nullable=False)
     status = Column(Enum('todo', 'doing', 'done', name='task_status'), default='todo')
     color = Column(CHAR(6), default='FFFFFF')
-    user_id = Column(CHAR(36), ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'))
+    start = Column(DATETIME, nullable=False, default=dt.datetime.now)
+    end = Column(DATETIME, nullable=False, default=dt.datetime.now)
 
-    timestamps = relationship('TaskTimings', back_populates='task')
+    user_id = Column(CHAR(36), ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'))
+    project_id = Column(CHAR(36), ForeignKey('projects.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=True)
+
+    project = relationship('Project', back_populates='tasks', uselist=False)
     user = relationship('User', back_populates='tasks')
 
 class Note(StorageBase, Base):
     __tablename__ = 'notes'
 
-    db_attrs = ['id', 'title', 'content', 'status', 'color', 'user_id', 'folder_id']
+    db_attrs = ('id', 'title', 'content', 'status',
+                'color', 'user_id', 'folder_id', 'project_id')
 
     id = Column(CHAR(36), primary_key=True, default=lambda: str(uuid4()))
     title = Column(VARCHAR(256), nullable=False)
@@ -101,14 +112,19 @@ class Note(StorageBase, Base):
     color = Column(CHAR(6), default='FFFFFF')
     user_id = Column(CHAR(36), ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'))
     folder_id = Column(CHAR(36), ForeignKey('folders.id', onupdate='CASCADE', ondelete='CASCADE'))
+    project_id = Column(CHAR(36), ForeignKey('projects.id', onupdate='CASCADE', ondelete='CASCADE'), nullable=True)
 
     user = relationship('User', back_populates='notes')
     folder = relationship('Folder', back_populates='notes')
     changelog = relationship('NotesChangelog', back_populates='note')
+    project = relationship('Project', back_populates='notes', uselist=False)
 
 
 class NotesChangelog(StorageBase, Base):
     __tablename__ = 'notes_changelog'
+
+    db_attrs = ('id', 'time_stamp', 'offset',
+                'modification', 'modified_data', 'note_id')
 
     id = Column(CHAR(36), primary_key=True, default=lambda: str(uuid4()))
     time_stamp = Column(DATETIME, nullable=False)
@@ -123,41 +139,15 @@ class NotesChangelog(StorageBase, Base):
 class Project(StorageBase, Base):
     __tablename__ = 'projects'
 
+    db_attrs = ('id', 'title', 'user_id')
+
     id = Column(CHAR(36), primary_key=True, default=lambda: str(uuid4()))
     title = Column(VARCHAR(256), nullable=False)
     user_id = Column(CHAR(36), ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'))
 
     user = relationship('User', back_populates='projects')
-
-
-class ProjectNotes(StorageBase, Base):
-    __tablename__ = 'project_notes_assoc'
-
-    project_id = Column(CHAR(36), ForeignKey('projects.id', onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
-    note_id = Column(CHAR(36), ForeignKey('notes.id', onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
-
-    # project = relationship('Project', back_populates='notes')
-    # note = relationship('Note', back_populates='projects')
-
-
-class ProjectTasks(StorageBase, Base):
-    __tablename__ = 'project_tasks_assoc'
-
-    project_id = Column(CHAR(36), ForeignKey('projects.id', onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
-    task_id = Column(CHAR(36), ForeignKey('tasks.id', onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
-
-    # project = relationship('Project', back_populates='tasks')
-    # tasks = relationship('Task', back_populates='project', primaryjoin='Project.id == ProjectTasks.project_id')
-
-
-class TaskTimings(StorageBase, Base):
-    __tablename__ = 'task_timestamps'
-
-    task_id = Column(CHAR(36), ForeignKey('tasks.id', onupdate='CASCADE', ondelete='CASCADE'), primary_key=True)
-    start = Column(DATETIME, nullable=False)
-    end = Column(DATETIME, nullable=False)
-
-    task = relationship('Task', back_populates='timestamps')
+    notes = relationship('Note', back_populates='project')
+    tasks = relationship('Task', back_populates='project')
 
 classes = {
     'Folder': Folder,
@@ -166,7 +156,4 @@ classes = {
     'Note': Note,
     'NotesChangelog': NotesChangelog,
     'Project': Project,
-    'ProjectNotes': ProjectNotes,
-    'ProjectTasks': ProjectTasks,
-    'TaskTimings': TaskTimings
 }

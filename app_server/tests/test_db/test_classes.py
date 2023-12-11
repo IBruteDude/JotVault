@@ -2,7 +2,8 @@ from faker import Faker
 from sqlalchemy.exc import IntegrityError
 import random
 
-from db import classes, main_storage
+from db.db_classes import classes
+from db import main_storage
 from utils.db_instance_gen import class_generators
 
 if __name__ == "__main__":

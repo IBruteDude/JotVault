@@ -16,9 +16,6 @@ api_routes = {
     'Note': '/<user_id>/notes',
     'NotesChangelog': '/<user_id>/notes/<note_id>/changes',
     'Project': '/<user_id>/projects',
-    'ProjectNotes': '/<user_id>/projects/<project_id>/notes',
-    'ProjectTasks': '/<user_id>/projects/<project_id>/tasks',
-    # 'TaskTimings': ''
 }
 
 print(f"Original: {instance_dict}")
