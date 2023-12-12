@@ -22,7 +22,7 @@ const Tasks = () => {
 					direction="row"
 					gap="1rem"
 					justifyContent="center">
-					<Task taskName="a7a" />
+					<Task taskName="first task" />
 				</Stack>
 			</Box>
 		</ContentContainer>
