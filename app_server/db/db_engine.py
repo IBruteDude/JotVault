@@ -1,10 +1,11 @@
-import sqlalchemy as sa
+from warnings import catch_warnings, simplefilter
 from db.db_classes import (
     Base, classes,
     Folder, User, Task, Note, NotesChangelog, Project
 )
 
 from sqlalchemy import create_engine
+from sqlalchemy.exc import SAWarning
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 
@@ -46,7 +47,9 @@ class DBStorage:
 
     def get(self, cls, id):
         """find an object based on its class and id if found"""
-        return self.session.query(cls).get(id)
+        with catch_warnings():
+            simplefilter("ignore", category=SAWarning)
+            return self.session.query(cls).get(id)
 
     def delete(self, obj):
         """delete from the current session obj or instance with this key"""
@@ -72,7 +75,9 @@ class DBStorage:
                     queried_dict[f'{cls.__name__}.{record.id}'] = record.dict_repr()
             return queried_dict
 
-        db_query = self.session.query(cls).all()
+        with catch_warnings():
+            simplefilter("ignore", category=SAWarning)
+            db_query = self.session.query(cls).all()
         for record in db_query:
             queried_dict[f'{cls.__name__}.{record.id}'] = record.dict_repr()
         return list(queried_dict.values())

@@ -29,7 +29,7 @@ class StorageBase:
             del dic['id']
         for key in self.__dict__:
             value = dic.get(key)
-            if key is not None:
+            if key is not None and value is not None:
                 setattr(self, key, value)
         main_storage.save()
 
@@ -46,7 +46,7 @@ class Folder(StorageBase, Base):
 
     id = Column(CHAR(36), primary_key=True, default=lambda: str(uuid4()))
     title = Column(VARCHAR(256), nullable=False)
-    parent_id = Column(CHAR(36), ForeignKey('folders.id', onupdate='CASCADE', ondelete='CASCADE'))
+    parent_id = Column(CHAR(36), ForeignKey('folders.id', onupdate='CASCADE', ondelete='CASCADE'), default='00000000-0000-0000-0000-000000000000')
     user_id = Column(CHAR(36), ForeignKey('users.id', onupdate='CASCADE', ondelete='CASCADE'))
 
     user = relationship('User', back_populates='folders')
