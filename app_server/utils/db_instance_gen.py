@@ -6,11 +6,14 @@ from db.db_classes import *
 
 fake = Faker()
 
-def random_id(cls):
+def random_id(cls, return_obj=False):
     ''' select a random instance's id of type cls '''
     objs = main_storage.all(cls)
     if len(objs) != 0:
-        return random.choice(objs)['id']
+        obj = random.choice(objs)
+        if return_obj:
+            return obj
+        return obj['id']
 
 class_generators = {
     "User": lambda: {
@@ -21,35 +24,38 @@ class_generators = {
         "pfp_url": fake.image_url(),
         "password": fake.password(),
     },
-    "Folder": lambda: {
+    "Folder": lambda: (lambda folder: {
         "title": fake.sentence()[:256],
 
-        "user_id": random_id(User),
-        "parent_id": random_id(Folder),
-    },
-    "Task": lambda: {
+        "user_id": folder['user_id'],
+        "parent_id": folder['parent_id'],
+    })(random_id(Folder, True)),
+    "Task": lambda: (lambda project: {
         "title": fake.sentence()[:256],
         "description": fake.paragraph()[:2048],
         "status": random.choice(["todo", "doing", "done"]),
         "color": fake.safe_hex_color()[1:],
-        "start": fake.date_time(),
-        "end": fake.date_time(),
+        "start": str(fake.date_time()),
+        "end": str(fake.date_time()),
 
-        "user_id": random_id(User),
-        "project_id": random_id(Project),
-    },
-    "Note": lambda: {
+        "user_id": project['user_id'],
+        "project_id": project['id'],
+    })(random_id(Project, True)),
+    "Note": lambda: (lambda project: {
         "title": fake.sentence()[:256],
         "content": fake.text(),
         "status": random.choice(["pinned", "normal", "archived", "trashed"]),
         "color": fake.safe_hex_color()[1:],
 
-        "user_id": random_id(User),
-        "folder_id": random_id(Folder),
-        "project_id": random_id(Project),
-    },
+        "user_id": project['user_id'],
+        "folder_id": (
+            lambda folders:
+                random.choice(folders).id if len(folders) > 0 else None
+            )(main_storage.get(User, project['user_id']).folders),
+        "project_id": project['id'],
+    })(random_id(Project, True)),
     "NotesChangelog": lambda: {
-        "time_stamp": fake.date_time(),
+        "time_stamp": str(fake.date_time()),
         "offset": random.randint(0, 1024),
         "modification": random.choice(["addition", "deletion"]),
         "modified_data": fake.text()[:1024],
