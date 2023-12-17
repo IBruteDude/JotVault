@@ -10,11 +10,8 @@ from utils.db_instance_gen import class_generators, random_id
 
 ipaddress = '172.22.112.189' # rs.get('https://api.ipify.org').text
 
-
 # the api request url prefix
-api_url = f'http://{ipaddress}:5000/api/v1/users'
-
-rs.get(api_url).json()
+api_url = f'http://{ipaddress}:5000/api/v1'
 
 ########## The complete list of available api routes ##########
 '/users/<user_id>'
@@ -125,10 +122,10 @@ def test_put_delete(cls, route):
     response = rs.delete(url).json()
     print(f'Delete Response: {response}\n', flush=True)
 
-# for cls, route in api_routes:
-#     # try:
-#         test_get_post(cls, route)
-#         test_put_delete(cls, route)
+for cls, route in api_routes:
+    # try:
+        test_get_post(cls, route)
+        test_put_delete(cls, route)
     # except Exception as e:
     #     print('-' * 80)
     #     print(f"[{e.__class__.__name__}]: {e}")

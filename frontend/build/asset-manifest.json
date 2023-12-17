@@ -1,0 +1,33 @@
+{
+  "files": {
+    "main.css": "/static/css/main.7c2bc941.css",
+    "main.js": "/static/js/main.04089d3c.js",
+    "static/media/circles-background.png": "/static/media/circles-background.50a60dc6cdc5a98c045c.png",
+    "static/media/circles.png": "/static/media/circles.3dbe82c375f97be1389a.png",
+    "static/media/JotVollt UI.zip": "/static/media/JotVollt UI.4c543bb43d637418bbe8.zip",
+    "static/media/Group 9.jpg": "/static/media/Group 9.6115ed2bb636b854e59f.jpg",
+    "static/media/undraw_taking_notes_re_bnaf 1.svg": "/static/media/undraw_taking_notes_re_bnaf 1.8b9bc3ce00e8dc6f27c33f3106c28c35.svg",
+    "static/media/k-footer.png": "/static/media/k-footer.5f595c09aa2ed3f31ace.png",
+    "static/media/h-footer.png": "/static/media/h-footer.a6bc617474def410deec.png",
+    "static/media/s-footer.png": "/static/media/s-footer.590851cf10cca188b985.png",
+    "static/media/Frame 3.png": "/static/media/Frame 3.70fafcbee68b21bc5bb5.png",
+    "static/media/undraw_design_notes_re_eklr 1.svg": "/static/media/undraw_design_notes_re_eklr 1.111c1cd5c2d0c69bfa387dc347495708.svg",
+    "static/media/Frame 1.png": "/static/media/Frame 1.635f8582ddba1a51057f.png",
+    "static/media/Frame 2.png": "/static/media/Frame 2.4a079555ee2bc1baf40a.png",
+    "static/media/circles-background.svg": "/static/media/circles-background.64e72ad1b3aba572a7b433fe6b7be743.svg",
+    "static/media/JotVault-footer.svg": "/static/media/JotVault-footer.7de2d1584bcf4f5bb9387253ef91ab8b.svg",
+    "static/media/JotVault.svg": "/static/media/JotVault.92f18ee1f5507614d939327ac2fad41d.svg",
+    "static/media/project-with-cover.svg": "/static/media/project-with-cover.32a467ee8c659799a9c7e1c6fdb13935.svg",
+    "static/media/task-with-cover.svg": "/static/media/task-with-cover.ae6ec7c4a55776b3ed1781411058e91d.svg",
+    "static/media/note-with-cover.svg": "/static/media/note-with-cover.d6d610032f1ca3787164f8d6d4d90392.svg",
+    "index.html": "/index.html",
+    "static/media/xmark-solid.svg": "/static/media/xmark-solid.c297bbd5d34ad04ddc2e1eea13e2d18b.svg",
+    "static/media/bars-solid.svg": "/static/media/bars-solid.1d88b88a97e3917d5b72ce4816f16d50.svg",
+    "main.7c2bc941.css.map": "/static/css/main.7c2bc941.css.map",
+    "main.04089d3c.js.map": "/static/js/main.04089d3c.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7c2bc941.css",
+    "static/js/main.04089d3c.js"
+  ]
+}
