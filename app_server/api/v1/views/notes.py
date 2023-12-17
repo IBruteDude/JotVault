@@ -15,10 +15,9 @@ def user_notes_route(user_id, note_id=None):
     if user is None:
         return jsonify({'error': 'user not found'})
 
-    match request.method:
-        case 'GET':
+    if request.method == 'GET':
             return jsonify([note.dict_repr() for note in user.notes])
-        case 'POST':
+    elif request.method == 'POST':
             task_dict = request.get_json(silent=True)
             try:
                 task = Note(**task_dict)
@@ -31,6 +30,7 @@ def user_notes_route(user_id, note_id=None):
                 print(f"[{e.__class__.__name__}]: {e}")
                 return jsonify({})
 
+
 @app_bp.route('/<user_id>/notes/<note_id>',
              methods=['GET', 'PUT', 'DELETE'], strict_slashes=False)
 def user_note_route(user_id, note_id):
@@ -41,30 +41,32 @@ def user_note_route(user_id, note_id):
     if note is None or note.user_id != user_id:
         return jsonify({'error': 'note not found'})
 
-    match request.method:
-        case 'GET':
+    if request.method == 'GET':
+        return jsonify(note.dict_repr())
+    elif request.method == 'PUT':
+        dic = request.get_json(silent=True)
+        if type(dic) is dict:
+            note.update(dic)
             return jsonify(note.dict_repr())
-        case 'PUT':
-            dic = request.get_json(silent=True)
-            if type(dic) is dict:
-                note.update(dic)
-                return jsonify(note.dict_repr())
-        case 'DELETE':
-            with main_storage.engine.connect() as con:
-                con.execute(text(f"DELETE FROM notes WHERE id = '{note_id}';"))
-                con.commit()
-            main_storage.save()
-            return jsonify({})
+    elif request.method == 'DELETE':
+        with main_storage.engine.connect() as con:
+            con.execute(text(f"DELETE FROM notes WHERE id = '{note_id}';"))
+            con.commit()
+        main_storage.save()
+        return jsonify({})
+
 
 @app_bp.route('/<user_id>/notes/<note_id>/changes/<change_id>',
              methods=['GET'], strict_slashes=False)
 def user_note_changes_route(user_id, note_id, change_id=None):
     return jsonify({'error': 'not implemented yet'})
 
+
 @app_bp.route('/<user_id>/notes/<note_id>/content',
              methods=['GET'], strict_slashes=False)
 def user_note_contents_route(user_id, note_id):
     return jsonify({'error': 'not implemented yet'})
+
 
 @app_bp.route('/<user_id>/notes/<note_id>/changes/<change_id>/content',
              methods=['GET'], strict_slashes=False)
