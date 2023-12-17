@@ -55,7 +55,6 @@ def user_project_route(user_id, project_id):
         main_storage.save()
         return jsonify({})
 
-
 @app_bp.route('/<user_id>/projects/<project_id>/tasks',
              methods=['GET', 'POST'], strict_slashes=False)
 def user_project_tasks_route(user_id, project_id):
