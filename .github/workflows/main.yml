@@ -16,7 +16,7 @@ jobs:
           which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y  )
           which rsync || ( apt-get update -y && apt-get install rsync -y )
           eval $(ssh-agent -s)
-          ssh-add <(echo "$-----BEGIN OPENSSH PRIVATE KEY-----
+          ssh-add <(echo "-----BEGIN OPENSSH PRIVATE KEY-----
             b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABlwAAAAdzc2gtcn
             NhAAAAAwEAAQAAAYEAsztir/gZahiQ1OlKnzxOFVzjd0sEHiEdEnjZKtDHILh82fuVTL1D
             AywK0wg4oa5qjzQ/Yu9wCAjo7E0bsX7bqOoX7KhyIz+v3Iro09b+gvP3fc0pD0gcKxVmdJ
