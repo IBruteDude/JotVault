@@ -30,5 +30,4 @@ jobs:
     env:
       SSH_PRIVATE_KEY: ${{secrets.SSH_KEY}}
       SERVER_IP: ${{secrets.SERVER_IP}}
-      PERS_ACC_TOK: ${{secrets.PERS_ACC_TOK}}
       CI: false
