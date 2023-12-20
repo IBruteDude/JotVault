@@ -1,0 +1,71 @@
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    steps:
+      - uses: actions/checkout@main
+      - name: Deploy
+        run: |
+          which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y  )
+          which rsync || ( apt-get update -y && apt-get install rsync -y )
+          eval $(ssh-agent -s)
+          ssh-add <(echo "$-----BEGIN OPENSSH PRIVATE KEY-----
+            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
+            -----END OPENSSH PRIVATE KEY-----" )
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          ssh-keyscan $157.245.72.171 >> ~/.ssh/known_hosts
+          chmod 644 ~/.ssh/known_hosts
+          ssh root@$157.245.72.171 'cd /jotvault && git pull'
+          ssh root@$157.245.72.171 'chmod 777 /jotvault/app_server/configure.sh && cd /jotvault/app_server && ./configure.sh'
+          ssh root@$157.245.72.171 'mysql < /jotvault/db_setup.sql'
+          ssh root@$157.245.72.171 'systemctl restart nginx'
+          ssh root@$157.245.72.171 'systemctl restart jotvault'
+
+    env:
+      SSH_PRIVATE_KEY: ${{secrets.SSH_KEY}}
+      SERVER_IP: ${{secrets.SERVER_IP}}
+      PERS_ACC_TOK: ${{secrets.PERS_ACC_TOK}}
+      CI: false
