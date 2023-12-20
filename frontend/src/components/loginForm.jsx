@@ -13,6 +13,9 @@ const StyledForm = styled.form`
 	@media (max-width: 768px) {
 		width: 75%;
 	}
+	@media (min-width: 1024px) and (max-width: 1100px) {
+		width: 80%;
+	}
 `;
 
 const LoginForm = () => {
